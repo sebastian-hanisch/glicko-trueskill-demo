@@ -1,5 +1,7 @@
 # Glicko und TrueSkill: die Zahl mit Unsicherheit – Streamlit-Demo
 
+**[→ Demo live ausprobieren](https://sebastianhanisch-glicko-trueskill-demo.streamlit.app/)**
+
 Achtes Stück der **Ranking-Linie** (Konzepte-Demo), Nachfolger von `elo-demo`: Elo schreibt die Wertung nach jeder Partie mit **festem K** fort. Glicko und TrueSkill führen zu
 jeder Wertung eine **Unsicherheit** mit, und aus ihr folgt ein K je Spieler und Zeitpunkt. Gemessen wird, wann das etwas bringt, wann nicht und wie gut die Unsicherheit
 kalibriert ist. Das Vehikel ist das neutrale, simulierte Turnier der Wurzel (Anfangsstärken aus dem Generator Version 1, wortgleich; danach eine Irrfahrt der Stärken); alles ist
@@ -149,4 +151,4 @@ Gebaut mit Streamlit, Plotly, numpy, pandas und fpdf2.
 
 ---
 
-Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). Mehr zu den Demos: [Interaktive Demos](https://sebastianhanisch.net/demos.html).
+Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). Mehr zur Reihe: [Ranking: von der Siegtabelle bis Learning to Rank](https://sebastianhanisch.net/konzepte-ranking.html).
