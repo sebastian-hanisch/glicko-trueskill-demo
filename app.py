@@ -292,7 +292,7 @@ with st.expander("📐 Mathematische Formulierung"):
 
 **Elo.** $\mu_i \leftarrow \mu_i + k\,(s - E)$, $\mu_j \leftarrow \mu_j - k\,(s - E)$ mit $k = K/173{,}7$.
 
-**Glicko** (Glickman 1999, feste Volatilität). Unsicherheit $\varphi$ (in Punkten: RD). Zu Beginn jeder Periode $\varphi \leftarrow \min(\sqrt{\varphi^2 + c^2},\ \varphi_0)$.
+**Glicko** (Glickman 1999, feste Volatilität; die Bezeichnung RD und die Deckelung bei $\varphi_0$ nach Glickmans Beschreibung auf glicko.net, nicht aus dem Papier). Unsicherheit $\varphi$ (in Punkten: RD). Zu Beginn jeder Periode $\varphi \leftarrow \min(\sqrt{\varphi^2 + c^2},\ \varphi_0)$.
 Mit $g(\varphi_j) = 1/\sqrt{1 + 3\varphi_j^2/\pi^2}$, $E_j = \sigma\bigl(g(\varphi_j)(\mu - \mu_j)\bigr)$ und $v^{-1} = \sum_j g(\varphi_j)^2 E_j (1 - E_j)$:
 $\varphi' = \bigl(\varphi^{-2} + v^{-1}\bigr)^{-1/2}$, $\mu' = \mu + \varphi'^2 \sum_j g(\varphi_j)(s_j - E_j)$.
 
@@ -309,10 +309,12 @@ $\beta = 1{,}702/\sqrt 2$, damit $\Phi(d/(\sqrt 2\,\beta)) \approx \sigma(d)$.
 
 **Literatur.**
 - Glickman, M. E. (1999): Parameter estimation in large dynamic paired comparison experiments. *Journal of the Royal Statistical Society Series C (Applied Statistics)*
-  48 (3), 377–394, doi:10.1111/1467-9876.00159; Formeln und Rechenbeispiel (Wertung 1500, RD 200 gegen drei Gegner: 1464 und RD 151,4) nach dem Text „The Glicko system“
-  von der Seite des Autors (glicko.net).
+  48 (3), 377–394, doi:10.1111/1467-9876.00159; Formeln, Deckelung bei 350 und Rechenbeispiel (Wertung 1500, RD 200 gegen drei Gegner: 1464 und RD 151,4) nach dem Text „The Glicko system“
+  von der Seite des Autors (glicko.net); das Papier selbst ist im Volltext eingesehen (Gewicht g, Erwartung und Aktualisierung stimmen überein; Deckelung, Rechenbeispiel und „Ratings Deviation“ stehen dort nicht).
 - Herbrich, R., Minka, T., Graepel, T. (2006): TrueSkill™: A Bayesian skill rating system. *Advances in Neural Information Processing Systems 19* (NIPS 2006), 569–576
-  (Formeln nach der Darstellung in der Dokumentation des Pakets `trueskill`; das Original wurde nicht eingesehen).
+  (im Volltext eingesehen: Gleichung (1), Tabelle 1 mit V und W, Remis-Marge, Voreinstellungen; die ausgeschriebene 1-gegen-1-Form folgt aus Tabelle 1 und steht bei Dangauthier et al. (2007), Abschnitt 3.1,
+  und in der Dokumentation des Pakets `trueskill`).
+- Elo, A. E. (1978): *The Rating of Chessplayers, Past and Present.* Arco Publishing, New York (nach Katalogeinträgen, das Buch wurde nicht eingesehen).
 - Steele, G. L., Lea, D., Flood, C. H. (2014): Fast splittable pseudorandom number generators. *OOPSLA 2014*, 453–472 (Zufallsstrom des Generators).
         """
     )

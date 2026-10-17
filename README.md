@@ -19,7 +19,7 @@ der Drift entsprechend) auf 100 % (c = 0,24), während der Fehler wieder wächst
 ## Modell
 
 - **Elo:** θ_i += k (S − E), E = σ(θ_i − θ_j), k = K/173,7 (400 Punkte = Faktor 10 der Gewinnchancen); optional Anlauf-K für Neulinge (wie `elo-demo`).
-- **Glicko** (Glickman 1999, feste Volatilität, also Glicko-1; die Volatilität von Glicko-2 ist nicht umgesetzt): Wertung µ und Unsicherheit φ (die „Ratings Deviation“). Je Runde
+- **Glicko** (Glickman 1999, feste Volatilität, also Glicko-1; die Volatilität von Glicko-2 ist nicht umgesetzt; die Namen Glicko-1 und „Ratings Deviation“ stehen in Glickmans Beschreibung auf glicko.net, nicht im Papier): Wertung µ und Unsicherheit φ (die „Ratings Deviation“). Je Runde
   (eine Bewertungsperiode): φ ← min(√(φ² + c²), φ₀); g(φ_j) = 1/√(1 + 3φ_j²/π²), E = σ(g(φ_j)(µ − µ_j)), 1/v = Σ g² E (1 − E), φ' = 1/√(1/φ² + 1/v), µ' = µ + φ'² Σ g (s − E),
   mit den Werten vom Periodenbeginn für alle Beteiligten.
 - **TrueSkill** (Herbrich, Minka, Graepel 2006), 1 gegen 1: vor jeder Partie σ² += τ² für beide; c² = 2β² + σ_w² + σ_l², t = (µ_w − µ_l)/c, v = φ(t − ε/c)/Φ(t − ε/c),
@@ -65,7 +65,7 @@ Alle Zahlen: 60 feste Läufe, 8 Spieler, Abstand 0,3, 150 Runden, wenn nicht and
   Messung nach der Rückkehr) zu **0,430 gegen 0,460**. Der Befund steht jetzt als „klein, bei starker Drift am größten“.
 - **TrueSkill-Handwert:** Die bekannten Werte 29,396 / 7,171 für zwei Neulinge gelten mit der Remis-Wahrscheinlichkeit 0,10 der Standardeinstellung; **ohne Remis** (wie in dieser
   Demo) sind es **29,205 / 7,194**. Der Plan nannte die erste Zahl für „ohne Remis“; der Orakel-Test prüft beide gegen das Paket `trueskill`.
-- **Glicko deckelt die Unsicherheit bei φ₀** (Glickman: RD = min(√(RD² + c²), 350)); der Plan hatte die Formel ohne Deckel. Ohne ihn wächst die Unsicherheit eines Spielers in der
+- **Glicko deckelt die Unsicherheit bei φ₀** (nach Glickmans Beschreibung auf glicko.net: RD = min(√(RD² + c²), 350); im Papier steht die Deckelung nicht); der Plan hatte die Formel ohne Deckel. Ohne ihn wächst die Unsicherheit eines Spielers in der
   Pause über die eines Unbewerteten hinaus.
 - **TrueSkill-Skala (Phase 0):** β in θ-Einheiten ist 1,702/√2; mit dem Kehrwert lag der Fehler von TrueSkill bei 0,408 statt bei 0,257 ohne Drift (Skalenfehler, kein Befund).
 - **Mittleres K statt eigener Kalman-Referenz:** Die Verstärkung der Verfahren mit Unsicherheit liegt im Mittel über der von Elo (42 / 51 gegen 28), ohne dass sich der Fehler
@@ -95,9 +95,13 @@ Alle Zahlen: 60 feste Läufe, 8 Spieler, Abstand 0,3, 150 Runden, wenn nicht and
 
 - Glickman, M. E. (1999): Parameter estimation in large dynamic paired comparison experiments. *Journal of the Royal Statistical Society Series C (Applied Statistics)*
   48 (3), 377–394, doi:10.1111/1467-9876.00159. Formeln, Gewicht g(RD), die Deckelung bei 350 und das Rechenbeispiel (1500 / RD 200 gegen drei Gegner: 1464, RD 151,4) nach dem
-  Text „The Glicko system“ von der Seite des Autors (glicko.net), im Test nachgerechnet.
-- Herbrich, R., Minka, T., Graepel, T. (2006): TrueSkill™: A Bayesian skill rating system. *Advances in Neural Information Processing Systems 19*, 569–576 (Formeln nach der
-  Dokumentation des Pakets `trueskill`; das Original wurde nicht eingesehen). Die Handwerte 29,396 / 7,171 (Remis-Wahrscheinlichkeit 0,10) und 29,205 / 7,194 (ohne Remis) und die
+  Text „The Glicko system“ von der Seite des Autors (glicko.net), im Test nachgerechnet. Das Papier selbst ist im Volltext eingesehen (2026-10-17, glicko.net/research/glicko.pdf): Gewicht g,
+  Erwartung und Aktualisierung von Wertung und Varianz (Gleichungen (7), (9), (10)) stimmen mit den Formeln überein; die Deckelung bei 350, das Rechenbeispiel und die Bezeichnung
+  „Ratings Deviation“ stehen dort nicht.
+- Herbrich, R., Minka, T., Graepel, T. (2006): TrueSkill™: A Bayesian skill rating system. *Advances in Neural Information Processing Systems 19*, 569–576 (eingesehen
+  2026-10-17 im Volltext der NIPS-Fassung: Leistungsmodell und Gleichung (1), Gaußscher Dynamikfaktor, Erwartungsabgleich mit V und W (Tabelle 1), Remis-Marge aus der Remis-Wahrscheinlichkeit
+  (Abschnitt 4.1), Voreinstellungen µ₀ = 25, σ₀ = 25/3, β = σ₀/2, Dynamik σ₀/100 (Abschnitt 4.2); die ausgeschriebene 1-gegen-1-Form µ += σ² v/c steht im Papier nicht, sie folgt aus
+  Tabelle 1 und steht bei Dangauthier et al. (2007), Abschnitt 3.1, und in der Dokumentation des Pakets `trueskill`). Die Handwerte 29,396 / 7,171 (Remis-Wahrscheinlichkeit 0,10) und 29,205 / 7,194 (ohne Remis) und die
   Aktualisierungen auf Zufallsfolgen sind gegen `trueskill` 0.4.5 geprüft.
 - Elo, A. E. (1978): *The Rating of Chessplayers, Past and Present.* Arco Publishing, New York (nach Katalogeinträgen, das Buch wurde nicht eingesehen).
 - Steele, G. L., Lea, D., Flood, C. H. (2014): Fast splittable pseudorandom number generators. *OOPSLA 2014*, 453–472 (Zufallsstrom des Generators).
