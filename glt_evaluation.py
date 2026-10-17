@@ -319,7 +319,7 @@ def verdict_analysis(a: Analysis):
     if s.scenario == C.SCENARIOS[0]:
         spread = max(e.values()) - min(e.values())
         if spread < 0.03:
-            return "info", text + " **Alle drei liegen gleichauf**: Wenn alle gleich oft spielen, trägt die mitgeführte Unsicherheit nichts bei."
+            return "info", text + " **Alle drei liegen gleichauf**: Bei diesen Einstellungen trägt die mitgeführte Unsicherheit nichts Messbares bei."
         return "info", text + f" Am besten liegt **{best}**."
     if s.scenario == C.SCENARIOS[1]:
         r = a.error_rare
@@ -341,9 +341,9 @@ def verdict_equal(rows):
         return next(r["error"] for r in rows if r["sigma"] == sg and r["method"] == method)
     sg = C.DEFAULT_SIGMA
     gap = max(abs(at(s, "Elo") - at(s, "Glicko")) for s in {r["sigma"] for r in rows})
-    return "info", (f"Spielen alle gleich oft, **gibt es keinen Gewinn:** bei σ = {de(sg)} Elo {de(at(sg, 'Elo'), 3)}, Glicko {de(at(sg, 'Glicko'), 3)}, TrueSkill "
-                    f"{de(at(sg, 'TrueSkill'), 3)}; der größte Abstand zwischen Elo und Glicko über alle Driften ist {de(gap, 3)}. Alle drei sind derselbe Filter mit anderem "
-                    "Weg zur Verstärkung; der Abstimmparameter folgt der Drift wie das K bei Elo.")
+    return "info", (f"Spielen alle gleich oft, **gibt es im engen Feld (Abstand 0,3) keinen messbaren Gewinn:** bei σ = {de(sg)} Elo {de(at(sg, 'Elo'), 3)}, Glicko {de(at(sg, 'Glicko'), 3)}, TrueSkill "
+                    f"{de(at(sg, 'TrueSkill'), 3)}; der größte Abstand zwischen Elo und Glicko über alle Driften ist {de(gap, 3)}. Alle drei sind Filter mit unterschiedlich "
+                    "berechneter Verstärkung; der Abstimmparameter folgt der Drift wie das K bei Elo.")
 
 
 def verdict_calibration(rows):
@@ -352,7 +352,7 @@ def verdict_calibration(rows):
     lo, hi = min(r["c"] for r in rows), max(r["c"] for r in rows)
     mid = 0.06
     return "warning", (f"Die Abdeckung des 95-%-Intervalls hängt an c: **{pct(cov(lo))} %** bei c = {de(lo)}, **{pct(cov(mid))} %** bei c = {de(mid)} (der Drift entsprechend) "
-                       f"und **{pct(cov(hi))} %** bei c = {de(hi)}. Mit zu kleinem c ist die Zahl überzeugter, als sie sein darf; mit zu großem c ist das Intervall so weit, "
+                       f"und **{pct(cov(hi), 1)} %** bei c = {de(hi)}. Mit zu kleinem c ist die Zahl überzeugter, als sie sein darf; mit zu großem c ist das Intervall so weit, "
                        "dass es nichts sagt (und der Fehler steigt).")
 
 
@@ -383,9 +383,9 @@ def verdict_pause(rows):
     return "info", (f"Nach {C.PAUSE_LEN} Runden Pause bei starker Drift (σ = {de(big)}) liegt der Fehler nach {C.PAUSE_GAMES[2]} Partien bei **Glicko {de(at(big, 'Glicko, informiert', 'after20'), 2)}** "
                     f"gegen Elo {de(at(big, 'Elo', 'after20'), 2)} (Vorsprung {de(gain_big, 2)}); bei schwacher Drift (σ = {de(small)}) sind es "
                     f"{de(at(small, 'Glicko, informiert', 'after20'), 2)} gegen {de(at(small, 'Elo', 'after20'), 2)} (Vorsprung {de(gain_small, 2)}). Der Gewinn der Unsicherheit nach einer "
-                    "Pause ist klein und bei starker Drift am größten.")
+                    "Pause ist klein und mit 60 Läufen nicht klar von Rauschen zu trennen.")
 
 
 def verdict_compare(res):
-    return "info", (f"Auf denselben {res['runs']} Läufen unterscheiden sich Glicko und TrueSkill im Fehler um {de(res['diff_mean'], 3)} ± {de(res['diff_sd'], 3)}; die Endwertungen stimmen "
-                    f"zu Kendall τ = {de(res['tau'], 2)} überein. Logistisch gegen Probit, ein Gewicht g(φ) gegen v- und w-Funktion: dasselbe Verfahren in zwei Gewändern.")
+    return "info", (f"Auf denselben {res['runs']} Läufen unterscheiden sich Glicko und TrueSkill im Fehler um {de(res['diff_mean'], 3)} ± {de(res['diff_sd'], 3)} (Streuung über die Läufe; TrueSkill im Mittel etwas schlechter); die Endwertungen stimmen "
+                    f"zu Kendall τ = {de(res['tau'], 2)} überein. Logistisch gegen Probit, ein Gewicht g(φ) gegen v- und w-Funktion: nahezu dasselbe Verfahren in zwei Gewändern.")

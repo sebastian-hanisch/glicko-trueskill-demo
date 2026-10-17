@@ -47,6 +47,7 @@ def test_with_equal_activity_the_three_methods_are_level(equal):
         assert equal[(sg, "TrueSkill")]["error"] == pytest.approx(t, abs=0.001), sg
     assert max(abs(equal[(sg, "Elo")]["error"] - equal[(sg, "Glicko")]["error"]) for sg in expected) < 0.012
     assert max(abs(equal[(sg, "Elo")]["error"] - equal[(sg, "TrueSkill")]["error"]) for sg in expected) < 0.015
+    assert max(abs(equal[(sg, "Glicko")]["error"] - equal[(sg, "TrueSkill")]["error"]) for sg in expected) < 0.018      # README: Glicko–TrueSkill bis 0,017
 
 
 def test_the_best_parameters_follow_the_drift(equal):
@@ -141,7 +142,7 @@ def test_verdict_texts_quote_the_measured_numbers(equal, calibration, activity, 
     level, text = ev.verdict_equal(list(equal.values()))
     assert "Elo 0,334, Glicko 0,339, TrueSkill 0,348" in text and "0,010" in text
     text = ev.verdict_calibration([{"c": c, "method": m, "cover": r["cover"], "error": r["error"]} for (c, m), r in calibration.items()])[1]
-    assert "**81 %** bei c = 0,00" in text and "**97 %** bei c = 0,06" in text and "**100 %** bei c = 0,24" in text
+    assert "**81 %** bei c = 0,00" in text and "**97 %** bei c = 0,06" in text and "**99,5 %** bei c = 0,24" in text
     text = ev.verdict_activity(list(activity.values()))[1]
     assert "Elo mit K = 40 bei 0,474" in text and "bei 0,500 (schlechter)" in text and "bei 0,445 (besser)" in text
     text = ev.verdict_newcomer([{"gap": g, "label": lab, "error": e} for (g, lab), e in newcomer.items()])[1]

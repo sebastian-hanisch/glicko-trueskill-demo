@@ -2,7 +2,7 @@
 Sebastian Hanisch - Operations Research und Machine Learning
 
 Achtes Stück der Ranking-Linie: Elo schreibt die Wertung mit festem K fort. Glicko und TrueSkill führen zu jeder Wertung eine Unsicherheit mit, und aus ihr folgt ein K je
-Spieler und Zeitpunkt. Sechs Experimente messen, wann das etwas bringt (Neuling, seltene Spieler, Pause), wann nicht (alle spielen gleich oft) und wie gut die
+Spieler und Zeitpunkt. Sechs Experimente messen, wann das etwas bringt (Neuling, seltene Spieler, Pause), wann nicht (alle spielen gleich oft, im engen Feld) und wie gut die
 Unsicherheit kalibriert ist. Aufbau und Regeln: DEMO-PLAYBOOK.md (§2).
 
 Lauffähig mit: streamlit run app.py
@@ -86,7 +86,7 @@ st.markdown(
     """
 Elo schreibt eine Wertung mit **festem K** fort: ein Spieler mit 1000 Partien bewegt sich genauso schnell wie ein Neuling. Diese Demo ist das **achte Stück der
 Ranking-Linie** und fragt, was sich ändert, wenn man zu jeder Wertung eine **Unsicherheit mitführt**, wie **Glicko** und **TrueSkill** es tun: Das K wird dann je Spieler und
-Zeitpunkt gewählt. Gemessen wird, wann das etwas bringt (ein **Neuling**, **seltene Spieler**, eine **Pause**), wann nicht (alle spielen gleich oft), und dass die
+Zeitpunkt gewählt. Gemessen wird, wann das etwas bringt (ein **Neuling**, **seltene Spieler**, eine **Pause**), wann nicht (alle spielen gleich oft, im engen Feld), und dass die
 Unsicherheit nur so **gut kalibriert** ist wie der Zuwachs c, den man annimmt.
 
 Weiter unten: sechs **🔬 Experimente** mit Verdikt, **🚧 Wo die Annahmen enden** und der Expander **📐 Mathematische Formulierung**.
@@ -102,7 +102,7 @@ with st.expander("So rechnen Glicko und TrueSkill", expanded=True):
    Unsicherheit nimmt mit jeder Partie ab. Gegen einen unsicheren Gegner zählt die Partie weniger (Glicko: Gewicht g(RD)).
 3. **Mit der Zeit:** Die Unsicherheit wächst, weil sich die Stärke ändern kann: um c je Runde (Glicko, auch ohne Partie) bzw. τ je Partie (TrueSkill). **c und τ sind die
    Annahme über die Drift**, so wie K bei Elo.
-4. **Was dasselbe bleibt:** Beide sind Filter mit einer Verstärkung. Wo alle gleich oft spielen, nähert sich ihre Verstärkung der von Elo mit passendem K.
+4. **Was dasselbe bleibt:** Beide sind Filter mit einer Verstärkung. Wo alle gleich oft spielen, liefern sie ähnliche Genauigkeit wie Elo mit passendem K, bei einer im Mittel höheren Verstärkung.
         """
     )
 
@@ -273,8 +273,8 @@ st.markdown(
 | Annahme | Was passiert, wenn sie verletzt ist | Wer setzt an |
 |---|---|---|
 | **Die Drift ist bekannt** | Die Abdeckung des Intervalls folgt dem Zuwachs c: zu klein heißt zu überzeugt, zu groß heißt wertlos (Experiment 2). | WHR und TrueSkill Through Time |
-| **Die Anfangsunsicherheit passt** | Die übliche Voreinstellung 350 Punkte ist für ein enges Feld zu groß und kostet Genauigkeit (Experiment 3). | – |
-| **Die Information ist ungleich verteilt** | Wo alle gleich oft spielen, ist das K je Spieler kein Gewinn gegenüber einem passenden festen K (Experiment 1). | – |
+| **Die Anfangsunsicherheit passt** | Die übliche Voreinstellung 350 Punkte ist für ein enges Feld mit seltenen Spielern zu groß und kostet Genauigkeit; in einem weiten Feld oder beim Neuling ist sie vorteilhaft (Experiment 3). | – |
+| **Die Information ist ungleich verteilt** | Im engen Feld (Abstand 0,3) ist das K je Spieler kein Gewinn gegenüber einem passenden festen K, wenn alle gleich oft spielen (Experiment 1); in einem weiten Feld (Abstand 1,0) schlägt die Unsicherheit auch dann ein festes K. | – |
 | **Nur die Vergangenheit zählt** | Spätere Partien verbessern frühere Schätzungen nicht; ein Filter sieht keine Zukunft. | WHR und TrueSkill Through Time |
 | **Einzelne spielen gegeneinander** | Teams, Mehrpersonenspiele und partielles Spiel brauchen eine eigene Zerlegung. | Von der Mannschaft zum Einzelnen |
 | **Ein Spiel ist Sieg oder Niederlage** | Remis, Tore und Heimvorteil haben ein eigenes Modell; TrueSkill kennt eine Remis-Marge, die hier nicht vorkommt. | Tore, Remis, Heimvorteil |
