@@ -379,10 +379,11 @@ def verdict_pause(rows):
         return next(r[key] for r in rows if r["sigma"] == sg and r["label"] == label)
     big, small = max(r["sigma"] for r in rows), min(r["sigma"] for r in rows)
     gain_big = at(big, "Elo", "after20") - at(big, "Glicko, informiert", "after20")
+    gain_small = at(small, "Elo", "after20") - at(small, "Glicko, informiert", "after20")
     return "info", (f"Nach {C.PAUSE_LEN} Runden Pause bei starker Drift (σ = {de(big)}) liegt der Fehler nach {C.PAUSE_GAMES[2]} Partien bei **Glicko {de(at(big, 'Glicko, informiert', 'after20'), 2)}** "
                     f"gegen Elo {de(at(big, 'Elo', 'after20'), 2)} (Vorsprung {de(gain_big, 2)}); bei schwacher Drift (σ = {de(small)}) sind es "
-                    f"{de(at(small, 'Glicko, informiert', 'after20'), 2)} gegen {de(at(small, 'Elo', 'after20'), 2)}, also kein Vorsprung. Der Gewinn der Unsicherheit nach einer "
-                    "Pause ist klein und nur bei starker Drift zu sehen.")
+                    f"{de(at(small, 'Glicko, informiert', 'after20'), 2)} gegen {de(at(small, 'Elo', 'after20'), 2)} (Vorsprung {de(gain_small, 2)}). Der Gewinn der Unsicherheit nach einer "
+                    "Pause ist klein und bei starker Drift am größten.")
 
 
 def verdict_compare(res):

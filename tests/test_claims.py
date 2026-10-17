@@ -116,12 +116,15 @@ def test_the_newcomer_far_from_the_field_is_found_fast_and_the_equal_one_is_made
 
 def test_the_pause_gain_is_small_and_only_with_strong_drift(pause):
     assert pause[(0.12, "Elo")]["after20"] == pytest.approx(0.460, abs=0.001) and pause[(0.12, "Elo")]["param"] == 112.0
-    assert pause[(0.12, "Glicko, informiert")]["after20"] == pytest.approx(0.429, abs=0.001)
-    assert pause[(0.12, "Glicko, 350 Punkte")]["after20"] == pytest.approx(0.425, abs=0.001)
+    assert pause[(0.12, "Glicko, informiert")]["after20"] == pytest.approx(0.430, abs=0.001)
+    assert pause[(0.12, "Glicko, 350 Punkte")]["after20"] == pytest.approx(0.430, abs=0.001)
     assert pause[(0.12, "TrueSkill, informiert")]["after20"] == pytest.approx(0.441, abs=0.001)
     assert pause[(0.06, "Elo")]["after20"] == pytest.approx(0.288, abs=0.001)
-    assert pause[(0.06, "Glicko, informiert")]["after20"] == pytest.approx(0.303, abs=0.001)
-    assert pause[(0.06, "Elo")]["after1"] == pytest.approx(pause[(0.06, "Glicko, informiert")]["after1"], abs=0.001)
+    assert pause[(0.06, "Glicko, informiert")]["after20"] == pytest.approx(0.282, abs=0.001)
+    assert pause[(0.06, "Glicko, 350 Punkte")]["after20"] == pytest.approx(0.288, abs=0.001)
+    # nach der Rückkehr ist die Unsicherheit gewachsen: gleich nach der ersten Partie liegt Glicko deutlich vorn (0,431 gegen 0,454), nach 20 Partien nur noch um 0,01
+    assert pause[(0.06, "Elo")]["after1"] == pytest.approx(0.454, abs=0.001) and pause[(0.06, "Glicko, informiert")]["after1"] == pytest.approx(0.431, abs=0.001)
+    assert pause[(0.06, "Elo")]["after20"] - pause[(0.06, "Glicko, informiert")]["after20"] == pytest.approx(0.006, abs=0.002)
 
 
 # --- Experiment 6: Glicko gegen TrueSkill -------------------------------------------------------------------------------------------------
@@ -144,6 +147,6 @@ def test_verdict_texts_quote_the_measured_numbers(equal, calibration, activity, 
     text = ev.verdict_newcomer([{"gap": g, "label": lab, "error": e} for (g, lab), e in newcomer.items()])[1]
     assert "Abstand 2 vom Feld" in text and "festem K 1,11" in text and "Anlauf-K 0,72" in text and "Glicko 0,38**" in text and "Elo 0,16, Glicko 0,35" in text
     text = ev.verdict_pause([{"sigma": s, "label": lab, **{k: r[k] for k in ("after1", "after5", "after20")}} for (s, lab), r in pause.items()])[1]
-    assert "Glicko 0,43**" in text and "Elo 0,46" in text and "(Vorsprung 0,03)" in text and "0,30 gegen 0,29" in text
+    assert "Glicko 0,43**" in text and "Elo 0,46" in text and "(Vorsprung 0,03)" in text and "0,28 gegen 0,29 (Vorsprung 0,01)" in text
     text = ev.verdict_compare(compare)[1]
     assert "-0,009 ± 0,011" in text and "τ = 0,99" in text

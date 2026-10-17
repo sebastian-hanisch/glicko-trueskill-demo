@@ -53,13 +53,16 @@ Alle Zahlen: 60 feste Läufe, 8 Spieler, Abstand 0,3, 150 Runden, wenn nicht and
 | Kalibrierung: Abdeckung des 95-%-Intervalls (Glicko), c = 0 / 0,01 / 0,03 / 0,06 / 0,12 / 0,24 | **0,815 / 0,829 / 0,909 / 0,974 / 0,993 / 0,995** (TrueSkill gleich: 0,974 bei c = 0,06). Fehler am kleinsten bei c = 0,06 (0,339) und bei c = 0,24 auf 0,554 gestiegen. | `test_the_coverage_depends_on_c` |
 | Ungleiche Aktivität (Hälfte spielt mit p = 0,2), σ = 0,06 | Fehler gesamt: **Elo (K = 40) 0,474; Glicko mit 350 Punkten 0,500; Glicko informiert (0,7 θ) 0,445;** TrueSkill 0,533 und 0,454. Seltene Spieler: Elo 0,518, Glicko informiert 0,476. | `test_the_default_prior_hurts_and_an_informed_prior_helps`, `test_the_rare_players_are_the_hard_ones` |
 | Neuling (Fehler nach 20 eigenen Partien, σ = 0) | Abstand 0 / 1 / 2: **Elo fest 0,159 / 0,531 / 1,110; Elo mit Anlauf-K 0,251 / 0,352 / 0,716; Glicko 0,348 / 0,338 / 0,376;** TrueSkill 0,383 / 0,375 / 0,450. | `test_the_newcomer_errors`, `test_the_newcomer_far_from_the_field_is_found_fast_and_the_equal_one_is_made_noisy` |
-| Pause (60 Runden), Fehler nach 20 Partien | σ = 0,12: **Elo 0,460, Glicko 0,429 (informiert) bzw. 0,425 (350 Punkte), TrueSkill 0,441;** σ = 0,06: Elo 0,288, Glicko 0,303 (kein Vorsprung). | `test_the_pause_gain_is_small_and_only_with_strong_drift` |
+| Pause (60 Runden), Fehler nach 20 Partien | σ = 0,12: **Elo 0,460, Glicko 0,430 (informiert) bzw. 0,430 (350 Punkte), TrueSkill 0,441;** σ = 0,06: Elo 0,288, Glicko 0,282 (informiert) bzw. 0,288 (350 Punkte); nach der ersten Partie 0,431 gegen 0,454. | `test_the_pause_gain_is_small_and_only_with_strong_drift` |
 | Glicko gegen TrueSkill (σ = c = τ = 0,06) | Fehlerdifferenz −0,009 ± 0,011, Kendall τ der Endwertungen 0,987. | `test_glicko_and_trueskill_are_nearly_the_same_method` |
 
 ## Befunde und Korrekturen gegenüber dem Plan
 
+- **Korrektur 2026-10-17 (Eigenschaftstest, von Hand gerechnete Handinstanz):** Glicko ließ die Unsicherheit φ in der Pause **nicht** wachsen (Schritt 1 lief nur für Spieler im Feld), obwohl die README das Gegenteil vorsah; das
+  Orakel hatte die Regel mitgeschrieben. Mit wachsendem φ ändern sich nur die Pause-Zahlen: σ = 0,06, Fehler nach 20 Partien Glicko informiert 0,303 → 0,282 (Elo 0,288), 350 Punkte 0,320 → 0,288; σ = 0,12 praktisch gleich
+  (0,429 → 0,430 bzw. 0,425 → 0,430); nach der ersten Partie bei σ = 0,06 0,454 → 0,431. Die Aussage „klein, bei starker Drift am größten“ bleibt, die Aussage „kein Vorsprung bei schwacher Drift“ entfällt (Vorsprung 0,01 nach 20 Partien).
 - **Die Pause bringt weniger als in der Vorab-Messreihe:** 0,384 gegen 0,476 (100 Läufe, σ = 0,12) wurde mit der App-Instanz (60 feste Läufe, Pause in Runde 41 bis 100,
-  Messung nach der Rückkehr) zu **0,429 gegen 0,460**. Der Befund steht jetzt als „klein, nur bei starker Drift“.
+  Messung nach der Rückkehr) zu **0,430 gegen 0,460**. Der Befund steht jetzt als „klein, bei starker Drift am größten“.
 - **TrueSkill-Handwert:** Die bekannten Werte 29,396 / 7,171 für zwei Neulinge gelten mit der Remis-Wahrscheinlichkeit 0,10 der Standardeinstellung; **ohne Remis** (wie in dieser
   Demo) sind es **29,205 / 7,194**. Der Plan nannte die erste Zahl für „ohne Remis“; der Orakel-Test prüft beide gegen das Paket `trueskill`.
 - **Glicko deckelt die Unsicherheit bei φ₀** (Glickman: RD = min(√(RD² + c²), 350)); der Plan hatte die Formel ohne Deckel. Ohne ihn wächst die Unsicherheit eines Spielers in der

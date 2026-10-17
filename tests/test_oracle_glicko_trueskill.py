@@ -63,7 +63,7 @@ def glicko_run_pts(m, c_pts, rd0_pts):
         if m.join_round and t == m.join_round:
             r[0] = sum(r[1:]) / (n - 1)
             rd[0] = rd0_pts
-        pre = [min(math.sqrt(rd[q] ** 2 + c_pts ** 2), rd0_pts) if m.presence[t][q] else rd[q] for q in range(n)]
+        pre = [min(math.sqrt(rd[q] ** 2 + c_pts ** 2), rd0_pts) for q in range(n)]
         mine = {q: [] for q in range(n)}
         for k in np.nonzero(m.rnd == t)[0]:
             i, j, w = int(m.i[k]), int(m.j[k]), int(m.win[k])
